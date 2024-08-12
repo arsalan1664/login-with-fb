@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 const Login = () => {
   const [loginResponse, setLoginResponse] = useState({})
   const [token, setToken] = useState("")
+  const [pageId, setPageId] = useState("")
+  const [pageName, setName] = useState("")
   const [review, setReview] = useState([])
 
   useEffect(() => {
@@ -42,12 +44,16 @@ const Login = () => {
     FB.api("/me/accounts", function (response:any) {
       console.log(response);
       setToken(response.data[0].access_token)
+      setPageId(response?.data[0]?.id)
+      setName(response?.data[0]?.name)
     });
   }
 
+  console.log(pageId)
+
   function TestAPI2() {
     console.log("Welcome!  Fetching your information.... ");
-    FB.api(`/229161406954796/ratings/?access_token=${token}`, function (response: any) {
+    FB.api(`/${pageId}/ratings/?access_token=${token}`, function (response: any) {
       console.log(response);
       //TODO: set the review
       setReview(response.data)
@@ -67,7 +73,11 @@ const Login = () => {
         <button onClick={TestAPI}>fetch me</button>
         <button onClick={TestAPI2}>fetch page</button>
         <button onClick={TestAPI3}>Logout</button>
-
+        <button className="fb-review-button">
+        <a href={`https://web.facebook.com/profile.php?id=${pageId}&sk=reviews`} target="_blank">
+            Leave a Review on Facebook
+        </a>
+    </button>
       </div>
       <div className="h-56 w-20">
         {review?.map((i:any)=>(
